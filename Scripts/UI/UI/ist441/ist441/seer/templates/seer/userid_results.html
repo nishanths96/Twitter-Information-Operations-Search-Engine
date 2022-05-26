@@ -1,0 +1,165 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    {% load staticfiles %}-->
+<!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+<!--    <title>User-ID Search Results</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <form id="userid_search"  method="GET" action="/display_userids/">-->
+<!--         <input type="text" name="query_userid" id="search_box1" class='search_box'/>-->
+<!--        <input type="datetime-local" name="lower_time_stamp" id="search_box2" class='search_box'/>-->
+<!--        <input type="datetime-local" name="upper_time_stamp" id="search_box3" class='search_box'/>-->
+<!--        <input type="number" value="page_number" name="page_number" id="search_box4" class='search_box'/>-->
+<!--        <input type="submit" value="Search" class="search_button" /><br />-->
+<!--    </form>-->
+<!--    {% if uid_search_results%}-->
+<!--        {{uid_search_results.userid}}, {{uid_search_results.account_creation_date}}, {{uid_search_results.follower_count}},-->
+<!--        {{uid_search_results.following_count}}, {{uid_search_results.first_tweet_time}},-->
+<!--        {{uid_search_results.last_tweet_time}}, {{uid_search_results.total_tweets}},-->
+<!--        {% for url in uid_search_results.urls %}-->
+<!--            {{ url }}-->
+<!--        {% endfor %}-->
+<!--        {% for hashtag in uid_search_results.hashtags %}-->
+<!--            {{ hashtag }}-->
+<!--        {% endfor %}<br>-->
+<!--    {% endif %}-->
+
+<!--    {% if errormessage %}-->
+<!--        {{ errormessage }}-->
+<!--    {% endif %}-->
+
+<!--    {% if nouid %}-->
+<!--        {{ nouid }}-->
+<!--    {% endif %}-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/seer/global.css">
+    <title>User-ID Search Results</title>
+</head>
+<body>
+{% include 'seer/nav_bar.html'%}
+<div class="xml xmt">
+    <h4> User Details </h4>
+</div>
+<form id="userid_search" method="GET" action="/display_userids/">
+    <div class="row ml">
+        <div class="col-sm-6 sm">
+            <div class="form-group sm">
+                <label for="search_box1">User ID</label>
+                <input type="text" class="form-control" name="query_userid" id="search_box1">
+                <small id="useridhelp" class="form-text text-muted">User ID is a mandatory field.</small>
+            </div>
+            <div class="form-group sm">
+                <label for="search_box2">User Info From</label>
+                <input type="datetime-local" class="form-control" name="lower_time_stamp" id="search_box2">
+                <small id="lowertimehelp" class="form-text text-muted">Timestamps are NOT mandatory fields. Used to
+                    search for user details in a specific timeframe.</small>
+            </div>
+            <div class="form-group sm">
+                <label for="search_box2">User Info Upto</label>
+                <input type="datetime-local" class="form-control" name="upper_time_stamp" id="search_box3">
+                <small id="uppertimehelp" class="form-text text-muted">Timestamps are NOT mandatory fields. Used to
+                    search for user details in a specific timeframe.</small>
+            </div>
+<!--            <div class="form-group sm">-->
+<!--                <label for="search_box3">Page Number</label>-->
+<!--                <input type="number" class="form-control" name="page_number" id="search_box4">-->
+<!--                <small id="tweetcounthelp" class="form-text text-muted">Used to goto a particular page.</small>-->
+<!--            </div>-->
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" name="download_results" value="download_results" class="btn btn-primary">Download CSV</button>
+        </div>
+    </div>
+</form>
+{% if uid_search_results%}
+<div class="row sm">
+    <div class="col-sm-6">
+        <div class="card sm" style="width: 40rem;">
+            <div class="card-header">
+                <h5>Basic User Info</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><h6>User Name:</h6> {{uid_search_results.user_display_name}}</li>
+                <li class="list-group-item"><h6>User ID:</h6> {{uid_search_results.userid}}</li>
+                <li class="list-group-item"><h6>User Reported Location:</h6>
+                    {{uid_search_results.user_reported_location}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row sm">
+    <div class="col-sm-6">
+        <div class="card bg-light mb-3 sm" style="width: 40rem;">
+            <div class="card-body">
+                <h5 class="card-title">User Description</h5>
+                <p class="card-text">{{uid_search_results.user_profile_description}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row sm">
+    <div class="col-sm-6">
+        <div class="card sm" style="width: 40rem;">
+            <div class="card-header">
+                <h5>Twitter Info</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><h6>Account Creation Date:</h6> {{uid_search_results.account_creation_date}}
+                </li>
+                <li class="list-group-item"><h6>Follower Count:</h6> {{uid_search_results.follower_count}}</li>
+                <li class="list-group-item"><h6>Following Count:</h6> {{uid_search_results.following_count}}</li>
+                <li class="list-group-item"><h6>First Tweet Time:</h6> {{uid_search_results.first_tweet_time}}</li>
+                <li class="list-group-item"><h6>Latest Tweet Time:</h6> {{uid_search_results.last_tweet_time}}</li>
+                <li class="list-group-item"><h6>Total Tweet Count:</h6> {{uid_search_results.total_tweets}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>List of unique URLs included in Tweet Text</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for url in uid_search_results.urls %}
+                <li class="list-group-item"><a href="{{ url }}">{{ url }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>List of unique Hashtags included in Tweet Text</h5>
+            </div>
+            <div class="row hash-tag-group">
+                {% for hashtag in uid_search_results.hashtags %}
+                    <a class="hash-tag btn btn-link" href="https://twitter.com/hashtag/{{ hashtag }}" role="button" target="_blank">#{{ hashtag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if errormessage %}
+{{ errormessage }}
+{% endif %}
+
+{% if nouid %}
+{{ nouid }}
+{% endif %}
+{% include 'seer/footer.html'%}
+</body>
+</html>

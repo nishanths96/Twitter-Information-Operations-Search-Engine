@@ -1,0 +1,106 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    {% load staticfiles %}-->
+<!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+<!--    <title>Tweet-Text Search Results</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--{% include 'seer/nav_bar.html'%}-->
+<!--    <form id="tweet_text_search"  method="GET" action="/display_locations/">-->
+<!--        <input type="text" name="query_location" id="search_box1" class='search_box'/>-->
+<!--        <input type="number" name="page_number" id="search_box4" class='search_box'/>-->
+<!--        <input type="submit" value="Search" class="search_button" /><br />-->
+<!--    </form>-->
+
+<!--    {% if location_search_results%}-->
+<!--        {% for id, result in location_search_results.items %}-->
+<!--            {% for attribute, value in result.items %}-->
+<!--                {{attribute}}: {{value}} <br>-->
+<!--            {% endfor %}-->
+<!--        {% endfor %}-->
+<!--    {% endif %}-->
+
+<!--    {% if errormessage %}-->
+<!--        {{errormessage}}-->
+<!--    {% endif %}-->
+
+<!--    {% if nouid %}-->
+<!--        {{ nouid }}-->
+<!--    {% endif %}-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/seer/global.css">
+    <title>Location Aggregated Results</title>
+</head>
+<body>
+{% include 'seer/nav_bar.html'%}
+
+<div class="xml xmt">
+    <h4> Track Twitter Activity </h4>
+</div>
+<form>
+    <div class="row ml">
+        <div class="col-sm-6 sm">
+            <div class="form-group sm">
+                <label for="search_box1">Location</label>
+                <input type="text" class="form-control" name="query_location" id="search_box1">
+                <small id="locationhelp" class="form-text text-muted">Searches for the user-reported location.</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</form>
+
+{% if location_search_results%}
+{% for id, value in location_search_results.items %}
+{% if forloop.first %}
+<div class="row">
+    {% endif %}
+    <div class="col-4 sp">
+        <div class="card ">
+            <div class="card-header">
+
+                <!--        <li class="list-group-item">-->
+                <div class="list_header">Location Name</div>
+                <div>{{value.user_reported_location}}</div>
+                <!--        </li>-->
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="list_header">Total Tweets</div>
+                    <span>{{value.total_tweets}}</span>
+                </li>
+                <li class="list-group-item">
+                    <div class="list_header">Total Users</div>
+                    <span>{{value.total_users}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% if forloop.counter|divisibleby:3 %}
+</div>
+<div class="row">{% endif %}
+    {% if forloop.last %}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if errormessage %}
+{{errormessage}}
+{% endif %}
+
+{% if nouid %}
+{{ nouid }}
+{% endif %}
+{% include 'seer/footer.html'%}
+</body>
+</html>

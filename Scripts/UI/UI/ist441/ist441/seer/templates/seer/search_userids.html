@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <title>Search For A UserID</title>
+</head>
+<body>
+    <form id="userid_search"  method="GET" action="/display_userids/">
+        <input type="text" name="query_userid" id="search_box1" class='search_box'/>
+        <input type="datetime-local" name="lower_time_stamp" id="search_box2" class='search_box'/>
+        <input type="datetime-local" name="upper_time_stamp" id="search_box3" class='search_box'/>
+        <input type="number" name="page_number" id="search_box4" class='search_box'/>
+        <input type="submit" value="Search" class="search_button" /><br />
+    </form>
+</body>
+</html>

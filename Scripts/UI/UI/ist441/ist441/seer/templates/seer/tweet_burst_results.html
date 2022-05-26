@@ -1,0 +1,105 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    {% load staticfiles %}-->
+<!--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>-->
+<!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+<!--    <title>User-ID Search Results</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <form id="userid_search"  method="GET" action="/display_tweet_bursts/">-->
+<!--        <input type="datetime-local" name="lower_time_stamp" id="search_box1" class='search_box'/>-->
+<!--        <input type="datetime-local" name="upper_time_stamp" id="search_box2" class='search_box'/>-->
+<!--        <input type="text" name="tweet_count" id="search_box3" class='search_box'/>-->
+<!--        <input type="text" name="user_location" id="search_box4" class='search_box'/>-->
+<!--        <input type="submit" value="Search" class="search_button" /><br />-->
+<!--    </form>-->
+
+<!--    {% if tweet_burst_results %}-->
+<!--        {% for id, result in tweet_burst_results.items %}-->
+<!--            {% for attribute, value in result.items %}-->
+<!--                {{attribute}}: {{value}} <br>-->
+<!--            {% endfor %}-->
+<!--        {% endfor %}-->
+<!--    {% endif %}-->
+<!--    {% if errormessage %}-->
+<!--        {{ errormessage }}-->
+<!--    {% endif %}-->
+
+<!--    {% if nouid %}-->
+<!--        {{ nouid }}-->
+<!--    {% endif %}-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/seer/global.css">
+<!--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>-->
+<!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>-->
+<!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+    <title>Tweet-Burst Search Results</title>
+</head>
+<body>
+{% include 'seer/nav_bar.html'%}
+    <div class="xml xmt">
+<h4> Tweet Bursts </h4>
+    </div>
+<form>
+    <div class="row ml">
+        <div class="col-sm-6 sm">
+      <div class="form-group sm">
+          <label for="search_box1">Tweet Bursts From</label>
+        <input type="datetime-local" class="form-control" name="lower_time_stamp" id="search_box1">
+        <small id="lowertimehelp" class="form-text text-muted">Timestamps are mandatory fields.</small>
+      </div>
+      <div class="form-group sm">
+        <label for="search_box2">Tweet Bursts Upto</label>
+        <input type="datetime-local" class="form-control" name="upper_time_stamp" id="search_box2">
+        <small id="uppertimehelp" class="form-text text-muted">Timestamps are mandatory fields.</small>
+      </div>
+      <div class="form-group sm">
+        <label for="search_box3">Set Tweet Burst Minimum Threshold</label>
+        <input type="number" class="form-control" name="tweet_count" id="search_box3">
+        <small id="tweetcounthelp" class="form-text text-muted">Minimum Threshold for Tweet Bursts.</small>
+      </div>
+      <div class="form-group sm">
+        <label for="search_box4">User Location</label>
+        <input type="text" class="form-control" name="user_location" id="search_box4">
+        <small id="userlocationhelp" class="form-text text-muted">Not a Mandatory Field. Fill it only if you want to find tweet bursts in a specific location.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+    </form>
+
+    {% if tweet_burst_results %}
+        {% for index, value in tweet_burst_results.items %}
+            <div class="row sm">
+              <div class="col-sm-6">
+                <div class="card bg-light mb-3 sm">
+                  <div class="card-body">
+                    <h5 class="card-title">User Name: {{value.user_display_name}}</h5>
+                      <h6 class="card-subtitle mb-2 text-muted">Tweet count : {{value.total_tweets}}</h6>
+                    <a href="/display_userids/?query_userid={{value.userid|urlencode}}&lower_time_stamp=&upper_time_stamp=&page_number=" class="btn btn-primary">Click here for User-Info</a>
+                  </div>
+                </div>
+              </div>
+              </div>
+        {% endfor %}
+    {% endif %}
+    {% if errormessage %}
+        {{ errormessage }}
+    {% endif %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% include 'seer/footer.html'%}
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    {% load staticfiles %}-->
+<!--    <script src="http://code.jquery.com/jquery-latest.js"></script>-->
+<!--    <title>Tweet-Text Search Results</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <form id="tweet_text_search"  method="GET" action="/display_tweets/">-->
+<!--        <input type="text" name="query_text" id="search_box1" class='search_box'/>-->
+<!--        <input type="datetime-local" name="lower_time_stamp" id="search_box2" class='search_box'/>-->
+<!--        <input type="datetime-local" name="upper_time_stamp" id="search_box3" class='search_box'/>-->
+<!--        <input type="number" name="page_number" id="search_box4" class='search_box'/>-->
+<!--        <input type="submit" value="Search" class="search_button" /><br />-->
+<!--    </form>-->
+
+<!--    {% if tweet_text_search_results%}-->
+<!--        {% for o in tweet_text_search_results %}-->
+<!--            {{o.tweetid}}, {{o.tweet_time}}, {{o.userid}}, {{o.user_screen_name}}, {{o.user_reported_location}},-->
+<!--            {{o.tweet_text}}, {{o.tweet_language}}<br>-->
+<!--    {% endfor %}-->
+<!--    {% endif %}-->
+
+<!--    {% if errormessage %}-->
+<!--        {{errormessage}}-->
+<!--    {% endif %}-->
+
+<!--    {% if nouid %}-->
+<!--        {{ nouid }}-->
+<!--    {% endif %}-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/seer/global.css">
+    <title>Tweet-Text Search Results</title>
+</head>
+<body>
+{% include 'seer/nav_bar.html'%}
+<div class="xml xmt">
+    <h4> Tweet Text </h4>
+</div>
+
+<form id="tweet_text_search" method="GET" action="/display_tweets/">
+    <div class="row ml">
+        <div class="col-sm-6 sm">
+            <div class="form-group sm">
+                <label for="search_box1">Query</label>
+                <input type="text"
+                       {% if get_params.query_text %}
+                       value="{{get_params.query_text}}"
+                       {% endif %}
+                       class="form-control" name="query_text" id="search_box1">
+                <small id="texthelp" class="form-text text-muted">Query Text field is mandatory.</small>
+            </div>
+            <div class="form-group sm">
+                <label for="search_box2">Tweet Time From</label>
+                <input type="datetime-local"
+                       {% if get_params.lower_time_stamp %}
+                       value="{{get_params.lower_time_stamp}}"
+                       {% endif %}
+                       class="form-control" name="lower_time_stamp" id="search_box2">
+                <small id="lowertimehelp" class="form-text text-muted">Timestamps are NOT mandatory.</small>
+            </div>
+            <div class="form-group sm">
+                <label for="search_box3">Tweet Time Upto</label>
+                <input type="datetime-local"
+                       {% if get_params.upper_time_stamp %}
+                       value="{{get_params.upper_time_stamp}}"
+                       {% endif %}
+                       class="form-control" name="upper_time_stamp" id="search_box3">
+                <small id="uppertimehelp" class="form-text text-muted">Timestamps are NOT mandatory.</small>
+            </div>
+            <div class="form-group sm">
+                <label for="search_box4">Page Number</label>
+                <input type="number"
+                       {% if get_params.page_number %}
+                        value="{{get_params.page_number}}"
+                       {% endif %}
+                       class="form-control" name="page_number" id="search_box4">
+                <small id="tweetcounthelp" class="form-text text-muted">Set the Page Number.</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" name="download_results" value="download_results" class="btn btn-primary">Download CSV</button>
+        </div>
+    </div>
+</form>
+
+{% if tweet_text_search_results %}
+<nav aria-label="Page navigation example" class = "xm">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="/display_tweets/?query_text={{get_params.query_text | urlencode}}&lower_time_stamp={{get_params.lower_time_stamp | urlencode}}&upper_time_stamp={{get_params.upper_time_stamp | urlencode}}&page_number={{get_params.previous_page_number | urlencode}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span>Previous</span>
+      </a>
+    </li>
+<!--    <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+    <li class="page-item">
+      <a class="page-link" href="/display_tweets/?query_text={{get_params.query_text | urlencode}}&lower_time_stamp={{get_params.lower_time_stamp | urlencode}}&upper_time_stamp={{get_params.upper_time_stamp | urlencode}}&page_number={{get_params.next_page_number | urlencode}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span >Next</span>
+      </a>
+
+    </li>
+  </ul>
+</nav>
+
+{% for o in tweet_text_search_results %}
+<div class="row sm">
+    <div class="col-sm-6">
+        <div class="card bg-light mb-3 sm">
+            <div class="card-header">
+                {%if o.is_retweet == 1%}
+                <div class="retweeted">
+                    <a class="btn btn-link"
+                       href="/display_userids/?query_userid={{o.userid|urlencode}}&lower_time_stamp=&upper_time_stamp=&page_number="
+                       role="button"
+                       target="_blank">{{o.user_display_name}}</a>
+                    Retweeted
+                </div>
+                <div><a class="btn btn-link"
+                        href="/display_userids/?query_userid={{o.retweet_userid|urlencode}}&lower_time_stamp=&upper_time_stamp=&page_number="
+                        role="button"
+                        target="_blank">@{{o.retweet_userid}}</a>·<span> {{o.tweet_time}} </span>·<span>{{o.tweet_language | upper}}</span>
+                </div>
+                {% else %}
+                <div>
+                    <a class="btn btn-link"
+                       href="/display_userids/?query_userid={{o.userid|urlencode}}&lower_time_stamp=&upper_time_stamp=&page_number="
+                       role="button"
+                       target="_blank">{{o.user_display_name}}</a>·<span> {{o.tweet_time}} </span>·<span>{{o.tweet_language | upper}}</span>
+                </div>
+                {%endif%}
+            </div>
+            <div class="card-body">
+                <!--                <h5 class="card-title">Light card title</h5>-->
+                <p class="card-text">{{o.tweet_text}}</p>
+                <div>
+                    {% for user in o.user_mentions %}
+                    <a class="hash-tag btn btn-link"
+                       href="/display_userids/?query_userid={{user|urlencode}}&lower_time_stamp=&upper_time_stamp=&page_number="
+                       role="button">@{{ user }}</a>
+                    {% endfor %}
+                </div>
+                <div>
+
+                    {% for hashtag in o.hashtags %}
+                    <a class="hash-tag btn btn-link"
+                       href="/https://twitter.com/hashtag/{{hashtag}}"
+                       role="button">#{{hashtag}}</a>
+                    {% endfor %}
+                </div>
+                <div>
+                    <button type="button" class="btn btn-link">{{o.like_count}} Likes</button>
+                    <button type="button" class="btn btn-link">{{o.reply_count}} Replies</button>
+                    <button type="button" class="btn btn-link">{{o.quote_count}} Quotes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<nav aria-label="Page navigation example" class = "xm">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="/display_tweets/?query_text={{get_params.query_text | urlencode}}&lower_time_stamp={{get_params.lower_time_stamp | urlencode}}&upper_time_stamp={{get_params.upper_time_stamp | urlencode}}&page_number={{get_params.previous_page_number | urlencode}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span>Previous</span>
+      </a>
+    </li>
+<!--    <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+    <li class="page-item">
+      <a class="page-link" href="/display_tweets/?query_text={{get_params.query_text | urlencode}}&lower_time_stamp={{get_params.lower_time_stamp | urlencode}}&upper_time_stamp={{get_params.upper_time_stamp | urlencode}}&page_number={{get_params.next_page_number | urlencode}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span >Next</span>
+      </a>
+
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+{% if errormessage %}
+{{errormessage}}
+{% endif %}
+
+{% if nouid %}
+{{ nouid }}
+{% endif %}
+{% include 'seer/footer.html'%}
+</body>
+</html>

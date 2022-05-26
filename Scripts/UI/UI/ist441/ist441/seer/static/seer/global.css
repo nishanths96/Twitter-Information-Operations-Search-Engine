@@ -1,0 +1,53 @@
+.sp{
+padding: 10px;
+}
+
+.sm{
+margin: 10px;
+}
+.m{
+margin: 20px;
+}
+.ml{
+margin-left: 20px;
+}
+.mr{
+margin-right: 20px;
+}
+.mt{
+margin-top: 20px;
+}
+.mb{
+margin-bottom: 20px;
+}
+.xm{
+margin: 30px;
+}
+.xmr{
+margin-right: 30px;
+}
+.xml{
+margin-left: 30px;
+}
+.xmt{
+margin-top: 30px;
+}
+.xmb{
+margin-bottom: 30px;
+}
+
+.hash-tag{
+width:auto;
+}
+
+.hash-tag-group{
+padding: 15px;
+}
+
+.retweeted{
+font-size: 0.8em !important;
+}
+
+.list_header{
+font-size:0.8rem;
+}
